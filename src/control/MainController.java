@@ -87,19 +87,31 @@ public class MainController {
      * @param tree Der zu traversierende BinarySearchTree.
      * @return Das Ergebnis der Traversierung als Zeichenkette.
      */
-    private String traverse(BinarySearchTree tree){
+    private String traverse(BinarySearchTree<Customer> tree){
         //TODO 04:  Siehe Rückgabe. You can do it!
-        return "Lege fest, wie die Daten ausgegeben werden sollen!";
+        String o = "";
+        if(!tree.isEmpty()){
+            o += tree.getContent().getName()+": "+tree.getContent().getSales()+"; \n";
+            o += traverse(tree.getLeftTree());
+            o += traverse(tree.getRightTree());
+        }
+        return o;
     }
 
     /**
-     * Es wird nach dem letzten Kunden in der Datenmenge geuscht.
+     * Es wird nach dem letzten Kunden in der Datenmenge gesucht.
      * Falls dieser existiert, wird ein zwei Felder großes Array mit seinem Namen (Index 0) und seinem Umsatz (Index 1) zurückgegeben, sonst null.
      * @return
      */
     public String[] searchLastName(){
         //TODO 05: Umsetzung einer Teilaufgabe einer zurückliegenden Hausaufgabe.
         String[] output = new String[2];
+        BinarySearchTree<Customer> tree = customerTree;
+        while (!tree.getRightTree().isEmpty()){
+            tree = tree.getRightTree();
+        }
+        output[0] = tree.getContent().getName();
+        output[1] = String.valueOf(tree.getContent().getSales());
 
         return output;
     }
@@ -110,6 +122,20 @@ public class MainController {
      */
     public int sumUpSales(){
         //TODO 06:  Ein weiterer Algorithmus, der mit einer Traversierung einfach umsetzbar ist.
+        String t = traverse();
+        if(!t.equals("")) {
+            int o = 0;
+            String[] s1 = t.split(": ");
+            String[] s2 = new String[s1.length];
+            for(int i=0; i<s1.length-1; i++){
+                s2[i] = s1[i+1].split(";")[0];
+            }
+            for(int i=0; i<s2.length-1; i++){
+                o += Integer.parseInt(s2[i]);
+            }
+            return o;
+        }
+
         return -1;
     }
 
@@ -121,7 +147,20 @@ public class MainController {
      */
     public boolean insert(String name, int sales){
         //TODO 07:  Erste Methode, die auf der Datenstruktur selbst konkret arbeitet und einige Methoden von ihr aufruft.
-        return false;
+        Customer c = new Customer(name, sales);
+        BinarySearchTree<Customer> tree = customerTree;
+        while (!tree.isEmpty()){
+            if(tree.getContent().isGreater(c)){
+                tree = tree.getLeftTree();
+            }else if(tree.getContent().isLess(c)){
+                tree = tree.getRightTree();
+            }else{
+                return false;
+            }
+        }
+        tree.insert(c);
+
+        return true;
     }
 
     /**
@@ -132,7 +171,21 @@ public class MainController {
      */
     public boolean delete(String name){
         //TODO 08: Methode funktioniert so ähnlich wie die vorherige.
-        return false;
+        Customer c = new Customer(name);
+        BinarySearchTree<Customer> tree = customerTree;
+        while (!tree.isEmpty() && !tree.getContent().isEqual(c)){
+            if(tree.getContent().isGreater(c)){
+                tree = tree.getLeftTree();
+            }else if(tree.getContent().isLess(c)){
+                tree = tree.getRightTree();
+            }
+        }
+        if(tree.getContent().isEqual(c)) {
+            tree.remove(c);
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -143,8 +196,23 @@ public class MainController {
      */
     public String[] searchName(String name){
         //TODO 09: Setze eine Methode zum Suchen eines konkreten Objekts um.
-        String[] output = new String[1];
-        return output;
+        Customer c = new Customer(name);
+        BinarySearchTree<Customer> tree = customerTree;
+        while (!tree.isEmpty() && !tree.getContent().isEqual(c)){
+            if(tree.getContent().isGreater(c)){
+                tree = tree.getLeftTree();
+            }else if(tree.getContent().isLess(c)){
+                tree = tree.getRightTree();
+            }
+        }
+        if(tree.getContent().isEqual(c)) {
+            String[] output = new String[2];
+            output[0] = tree.getContent().getName();
+            output[1] = String.valueOf(tree.getContent().getSales());
+            return output;
+        }
+
+        return null;
     }
 
     /**
@@ -155,8 +223,23 @@ public class MainController {
      */
     public String[] searchSales(int sales){
         //TODO 10: Diese Suche ist deutlich schwieriger umzusetzen als die vorherige. Welche Schwierigkeit ergibt sich hier?
-        String[] output = new String[1];
-        return output;
+
+        BinarySearchTree<Customer> tree = customerTree;
+        while (!tree.isEmpty() && ! (tree.getContent().getSales()==sales)){
+            if((tree.getContent().getSales()>sales)){
+                tree = tree.getLeftTree();
+            }else if((tree.getContent().getSales()<sales)){
+                tree = tree.getRightTree();
+            }
+        }
+        if(tree.getContent().getSales()==sales) {
+            String[] output = new String[2];
+            output[0] = tree.getContent().getName();
+            output[1] = String.valueOf(tree.getContent().getSales());
+            return output;
+        }
+
+        return null;
     }
 
 

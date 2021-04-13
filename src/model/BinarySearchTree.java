@@ -92,6 +92,9 @@ public class BinarySearchTree<ContentType extends ComparableContent<ContentType>
 	 */
 	public void insert(ContentType pContent) {
 		//TODO 01: Implementiere den Algorithmus zum Einfügen eines neuen Objekts.
+		if(pContent!=null){
+			node = new BSTNode<ContentType>(pContent);
+		}
 	}
 
 	/**
@@ -204,6 +207,17 @@ public class BinarySearchTree<ContentType extends ComparableContent<ContentType>
 	 */
 	public ContentType search(ContentType pContent) {
 		//TODO 03: Implementierte den Algorithmus zum Suchen eines Objekts.
+		if(pContent != null){
+			if(node.content!=null) {
+				if (node.content == pContent) {
+					return node.content;
+				} else if (node.content.isGreater(pContent)) {
+					node.left.search(pContent);
+				} else if (node.content.isLess(pContent)) {
+					node.right.search(pContent);
+				}
+			}
+		}
 		return null;
 	}
 
