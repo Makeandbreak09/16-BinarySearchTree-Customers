@@ -71,4 +71,9 @@ public class Customer implements ComparableContent<Customer>{
         }
         return false;
     }
+
+    @Override
+    public String toString(){
+        return name+" - "+sales;
+    }
 }

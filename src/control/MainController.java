@@ -147,20 +147,12 @@ public class MainController {
      */
     public boolean insert(String name, int sales){
         //TODO 07:  Erste Methode, die auf der Datenstruktur selbst konkret arbeitet und einige Methoden von ihr aufruft.
-        Customer c = new Customer(name, sales);
-        BinarySearchTree<Customer> tree = customerTree;
-        while (!tree.isEmpty()){
-            if(tree.getContent().isGreater(c)){
-                tree = tree.getLeftTree();
-            }else if(tree.getContent().isLess(c)){
-                tree = tree.getRightTree();
-            }else{
-                return false;
-            }
+        if(searchName(name) == null) {
+            Customer c = new Customer(name, sales);
+            customerTree.insert(c);
+            return true;
         }
-        tree.insert(c);
-
-        return true;
+        return false;
     }
 
     /**
@@ -171,21 +163,12 @@ public class MainController {
      */
     public boolean delete(String name){
         //TODO 08: Methode funktioniert so ähnlich wie die vorherige.
-        Customer c = new Customer(name);
-        BinarySearchTree<Customer> tree = customerTree;
-        while (!tree.isEmpty() && !tree.getContent().isEqual(c)){
-            if(tree.getContent().isGreater(c)){
-                tree = tree.getLeftTree();
-            }else if(tree.getContent().isLess(c)){
-                tree = tree.getRightTree();
-            }
-        }
-        if(tree.getContent().isEqual(c)) {
-            tree.remove(c);
+        if(searchName(name) != null){
+            Customer c = new Customer(name);
+            customerTree.remove(c);
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
 
     /**
@@ -196,19 +179,11 @@ public class MainController {
      */
     public String[] searchName(String name){
         //TODO 09: Setze eine Methode zum Suchen eines konkreten Objekts um.
-        Customer c = new Customer(name);
-        BinarySearchTree<Customer> tree = customerTree;
-        while (!tree.isEmpty() && !tree.getContent().isEqual(c)){
-            if(tree.getContent().isGreater(c)){
-                tree = tree.getLeftTree();
-            }else if(tree.getContent().isLess(c)){
-                tree = tree.getRightTree();
-            }
-        }
-        if(tree.getContent().isEqual(c)) {
+        Customer c = customerTree.search(new Customer(name));
+        if(c != null){
             String[] output = new String[2];
-            output[0] = tree.getContent().getName();
-            output[1] = String.valueOf(tree.getContent().getSales());
+            output[0] = c.getName();
+            output[1] = String.valueOf(c.getSales());
             return output;
         }
 
