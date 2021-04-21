@@ -105,15 +105,18 @@ public class MainController {
      */
     public String[] searchLastName(){
         //TODO 05: Umsetzung einer Teilaufgabe einer zurückliegenden Hausaufgabe.
-        String[] output = new String[2];
-        BinarySearchTree<Customer> tree = customerTree;
-        while (!tree.getRightTree().isEmpty()){
-            tree = tree.getRightTree();
+        if(!customerTree.isEmpty()) {
+            String[] output = new String[2];
+            BinarySearchTree<Customer> tree = customerTree;
+            while (!tree.getRightTree().isEmpty()) {
+                tree = tree.getRightTree();
+            }
+            output[0] = tree.getContent().getName();
+            output[1] = String.valueOf(tree.getContent().getSales());
+            return output;
         }
-        output[0] = tree.getContent().getName();
-        output[1] = String.valueOf(tree.getContent().getSales());
 
-        return output;
+        return null;
     }
 
     /**
@@ -122,7 +125,7 @@ public class MainController {
      */
     public int sumUpSales(){
         //TODO 06:  Ein weiterer Algorithmus, der mit einer Traversierung einfach umsetzbar ist.
-        String t = traverse();
+        /*String t = traverse();
         if(!t.equals("")) {
             int o = 0;
             String[] s1 = t.split(": ");
@@ -134,9 +137,22 @@ public class MainController {
                 o += Integer.parseInt(s2[i]);
             }
             return o;
-        }
+        }*/
 
+        if(!customerTree.isEmpty()) {
+            return sumUpSales(customerTree);
+        }
         return -1;
+    }
+
+    public int sumUpSales(BinarySearchTree<Customer> tree){
+        int o = 0;
+        if(!tree.isEmpty()){
+            o += tree.getContent().getSales();
+            o += sumUpSales(tree.getLeftTree());
+            o += sumUpSales(tree.getRightTree());
+        }
+        return o;
     }
 
     /**
