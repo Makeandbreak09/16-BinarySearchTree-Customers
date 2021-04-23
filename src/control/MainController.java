@@ -3,9 +3,12 @@ package control;
 
 import model.BinarySearchTree;
 import model.Customer;
+import model.List;
 import view.DrawingPanel;
 import view.treeView.TreeNode;
 import view.treeView.TreePath;
+
+import java.util.Stack;
 
 /**
  * Created by Jean-Pierre on 12.01.2017.
@@ -139,10 +142,7 @@ public class MainController {
             return o;
         }*/
 
-        if(!customerTree.isEmpty()) {
-            return sumUpSales(customerTree);
-        }
-        return -1;
+        return sumUpSales(customerTree);
     }
 
     public int sumUpSales(BinarySearchTree<Customer> tree){
@@ -216,12 +216,19 @@ public class MainController {
         //TODO 10: Diese Suche ist deutlich schwieriger umzusetzen als die vorherige. Welche Schwierigkeit ergibt sich hier?
 
         BinarySearchTree<Customer> tree = customerTree;
-        while (!tree.isEmpty() && ! (tree.getContent().getSales()==sales)){
-            if((tree.getContent().getSales()>sales)){
-                tree = tree.getLeftTree();
-            }else if((tree.getContent().getSales()<sales)){
-                tree = tree.getRightTree();
-            }
+        while (!tree.isEmpty() && tree.getContent().getSales()!=sales){
+            tree = tree.getLeftTree();
+        }
+        if(tree.getContent().getSales()==sales) {
+            String[] output = new String[2];
+            output[0] = tree.getContent().getName();
+            output[1] = String.valueOf(tree.getContent().getSales());
+            return output;
+        }
+
+        tree = customerTree;
+        while (!tree.isEmpty() && tree.getContent().getSales()!=sales){
+            tree = tree.getRightTree();
         }
         if(tree.getContent().getSales()==sales) {
             String[] output = new String[2];
@@ -244,9 +251,41 @@ public class MainController {
      */
     public String[][] listUpperNames(String name){
         //TODO 11: Halbwegs sinnvolle Verknüpfung verschiedener Datenstrukturen zur Übung.
+        List<BinarySearchTree<Customer>> trees = new List<>();
+        Customer c = new Customer(name);
+        help(trees, customerTree);
+        List<Customer> list = new List<>();
+        while (!trees.isEmpty()) {
+            trees.toFirst();
+            if(trees.getContent().getContent().isGreater(c)) {
+                list.append(trees.getContent().getContent());
+            }
+            trees.remove();
+        }
 
-        String[][] output = new String[1][2];
+        int a = 0;
+        list.toFirst();
+        while (list.hasAccess()){
+            a++;
+            list.next();
+        }
+        String[][] output = new String[a][2];
+        list.toFirst();
+        for(int i = 0; i<output.length; i++){
+            output[i][0] = list.getContent().getName();
+            output[i][1] = String.valueOf(list.getContent().getSales());
+            list.next();
+        }
+
         return output;
+    }
+
+    public void help(List<BinarySearchTree<Customer>> trees, BinarySearchTree tree){
+        if(!tree.isEmpty()){
+            help(trees, tree.getLeftTree());
+            trees.append(tree);
+            help(trees, tree.getRightTree());
+        }
     }
 
     /**
